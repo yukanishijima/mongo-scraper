@@ -13,6 +13,14 @@ const ArticleSchema = new Schema({
     type: String,
     required: true
   },
+  intro: {
+    type: String,
+    required: true
+  },
+  image: {
+    type: String,
+    required: false
+  },
   saved: {
     type: Boolean,
     default: false
