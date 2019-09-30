@@ -2,7 +2,42 @@
 {{!-- <button type="button" id="clear">Clear</button> --}}
 <button type="button" id="saved"><a href="/saved">Saved articles</a></button>
 
+
 {{!-- to move to saved.handlebars --}}
 <div id="saved-articles"></div>
 
+
 <div id="article"></div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalWindow" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <p>Latest notes</p>
+        <div id="latest-notes"></div>
+
+        <form>
+          <label for="new-notes">Add new notes</label>
+          <textarea class="form-control" id="new-notes" rows="5"></textarea>
+          <button type="button" class="btn btn-secondary" id="clear">Clear</button>
+          <button type="button" class="btn btn-primary" id="add-notes">Add</button>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+      </div>
+
+    </div>
+  </div>
+</div>

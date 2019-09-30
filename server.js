@@ -74,7 +74,11 @@ app.get("/", function (req, res) {
       // if the article is already saved, delete it from database
       db.article.findOneAndRemove({ title: result.title, saved: false })
         .then(function (data) {
-          console.log("data already saved and deleted!");
+          if (data) {
+            console.log("data already saved and deleted!");
+          } else {
+            console.log("data not saved yet!")
+          }
         })
         .catch(function (err) {
           console.log(err);
@@ -134,6 +138,47 @@ app.delete("/saved-articles/:id", function (req, res) {
     .then(function (data) {
       res.json(data);
       console.log("data deleted");
+    });
+});
+
+
+// route for grabbing a specific article and populate it with its note
+app.get("/saved-articles/:id", function (req, res) {
+  db.article.findOne({ _id: req.params.id })
+    .populate("note")
+    .then(function (dbArticle) {
+      res.json(dbArticle);
+      console.log(`after populating: ${dbArticle}`);
+    })
+    .catch(function (err) {
+      res.json(err);
+    });
+});
+
+
+// route for saving notes
+app.post("/saved-articles/:id", function (req, res) {
+  db.note.create(req.body)
+    .then(function (dbNote) {
+      // to fix not to overwrite
+      return db.article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
+    })
+    .then(function (dbArticle) {
+      res.json(dbArticle);
+      console.log(dbArticle);
+    })
+    .catch(function (err) {
+      res.json(err);
+    });
+});
+
+// route for deleting notes
+app.delete("/notes/:id", function (req, res) {
+  db.note.findOneAndRemove({ _id: req.params.id })
+    .then(function (data) {
+      console.log("notes deleted");
+      res.json(data);
+      // console.log(data); //returns null
     });
 });
 
