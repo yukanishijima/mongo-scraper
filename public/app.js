@@ -95,10 +95,11 @@ $(function () {
   $(document.body).on("click", "#delete", function (e) {
     e.preventDefault();
     const articleId = $(this).attr("data-id");
+    const notesId = $("#existing-notes div").attr("data-id");
 
     $.ajax({
       method: "DELETE",
-      url: "/saved-articles/" + articleId
+      url: "/saved-articles/" + articleId + "/" + notesId
     })
       .then(function (data) {
         console.log("article deleted!");
@@ -111,6 +112,7 @@ $(function () {
     e.preventDefault();
     $("#existing-notes").empty();
     const notesId = $(this).attr("data-id");
+
     $.ajax({
       method: "GET",
       url: "/saved-articles/" + notesId
@@ -119,10 +121,14 @@ $(function () {
         if (data.note.length > 0) {
           data.note.forEach(element => {
             $("#existing-notes").append(`
-            <div data-id="${element._id}">${element.body}</div>
+            <div data-id="${element._id}">
+            <p>${element.body}</p>
+            <p>${(element.created_at).slice(0, 10)}</p>
             <button class="btn btn-secondary" id="delete-notes" data-id="${element._id}">Delete</button>
-            `);
+            </div>`);
           });
+        } else {
+          $("#existing-notes").append(`<p>No notes yet...</p>`);
         }
       });
   });
@@ -150,11 +156,15 @@ $(function () {
             let content = "";
             data.note.forEach(element => {
               content = `
-              <div data-id="${element._id}">${element.body}</div>
+              <div data-id="${element._id}">
+              <p>${element.body}</p>
+              <p>${(element.created_at).slice(0, 10)}</p>
               <button class="btn btn-secondary" id="delete-notes" data-id="${element._id}">Delete</button>
-              `;
+              </div>`;
             });
+
             $("#existing-notes").append(content);
+
           });
         $("#new-notes").val("");
       });

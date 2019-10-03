@@ -30,22 +30,21 @@ mongoose.connection.dropDatabase();
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/moongoose-scraper";
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
+
 // Routes
+
 
 // Route for scraping
 app.get("/", function (req, res) {
 
   axios.get("https://monocle.com/magazine/").then(function (response) {
     const $ = cheerio.load(response.data);
-
     $("article .container").each(function (i, element) {
-
       let result = {};
       result.title = $(this).children("header").children("h2").text();
       result.link = $(this).children("header").children("h2").children("a").attr("href");
       result.intro = $(this).children(".content").children("p").text();
       result.image = $(this).children(".content").children(".u-ratio").children("img").attr("src");
-
       // break each loop when there're 3 articles
       if (i > 10) {
         return false;
@@ -122,13 +121,29 @@ app.get("/saved-articles", function (req, res) {
     });
 });
 
+
 // route for deleting a saved article
-app.delete("/saved-articles/:id", function (req, res) {
-  db.article.findOneAndRemove({ _id: req.params.id })
+app.delete("/saved-articles/:articleId/:notesId", function (req, res) {
+
+  db.note.findOneAndRemove({ _id: req.params.notesId })
     .then(function (data) {
-      res.json(data);
-      console.log("data deleted");
+      console.log(data);
+    })
+    .catch(function (err) {
+      console.log(err);
     });
+
+  db.article.findOneAndUpdate(
+    { _id: req.params.articleId },
+    { $set: { saved: false }, $pull: { note: req.params.notesId } },
+    { new: true })
+    .then(function (data) {
+      console.log(data);
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
+  res.send("data deleted");
 });
 
 
@@ -161,6 +176,7 @@ app.post("/saved-articles/:id", function (req, res) {
       res.json(err);
     });
 });
+
 
 // route for deleting notes
 app.delete("/notes/:notesId/:articleId", function (req, res) {
