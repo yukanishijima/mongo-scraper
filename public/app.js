@@ -1,7 +1,19 @@
 $(function () {
 
+
+  $("#home").on("click", function (e) {
+    e.preventDefault();
+    $("#home-msg").show();
+    $("#article").hide();
+    $("#saved-articles").hide();
+  });
+
+
   $("#scrape").on("click", function (e) {
     e.preventDefault();
+    $("#home-msg").hide();
+    $("#saved-articles").hide();
+    $("#article").show();
 
     $.ajax({
       method: "GET",
@@ -49,6 +61,9 @@ $(function () {
 
   $("#saved").on("click", function (e) {
     e.preventDefault();
+    $("#home-msg").hide();
+    $("#article").hide();
+    $("#saved-articles").show();
 
     $.ajax({
       method: "GET",
@@ -56,21 +71,23 @@ $(function () {
     })
       .then(function (data) {
         $("#saved-articles").empty();
-        // console.log(data);
+        if (data.length === 0) {
+          $("#saved-articles").append("<p>No saved articles...</p>");
+        } else {
+          data.forEach(element => {
+            $("#saved-articles").append(`
+              <div id="${element._id}">
+                <a href="${element.link}" class="title">${element.title}</a>
+                <p>${element.intro}</p>
+                <img src="${element.image}" class="image" height="100">
+                <button type="button" id="delete" data-id="${element._id}">Delete</button>
+                <button type="button" id="notes" data-id="${element._id}" data-toggle="modal" data-target="#modalWindow">Notes</button>
+              </div>    
+            `);
 
-        data.forEach(element => {
-          $("#saved-articles").append(`
-          <div id="${element._id}">
-            <a href="${element.link}" class="title">${element.title}</a>
-            <p>${element.intro}</p>
-            <img src="${element.image}" class="image" height="100">
-            <button type="button" id="delete" data-id="${element._id}">Delete</button>
-            <button type="button" id="notes" data-id="${element._id}" data-toggle="modal" data-target="#modalWindow">Notes</button>
-          </div>    
-        `);
-
-          $("#add-notes").attr("data-id", `${element._id}`);
-        });
+            $("#add-notes").attr("data-id", `${element._id}`);
+          });
+        }
       });
   });
 
