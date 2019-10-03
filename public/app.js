@@ -92,16 +92,20 @@ $(function () {
 
   $(document.body).on("click", "#notes", function (e) {
     e.preventDefault();
-    $("#latest-notes").empty();
+    $("#existing-notes").empty();
     const notesId = $(this).attr("data-id");
     $.ajax({
       method: "GET",
       url: "/saved-articles/" + notesId
     })
       .then(function (data) {
-        if (data.note.body) {
-          $("#latest-notes").append(`<div>${data.note.body}</div>`);
-          $("#delete-notes").attr("data-id", `${data.note._id}`);
+        if (data.note.length > 0) {
+          data.note.forEach(element => {
+            $("#existing-notes").append(`
+            <div data-id="${element._id}">${element.body}</div>
+            <button class="btn btn-secondary" id="delete-notes" data-id="${element._id}">Delete</button>
+            `);
+          });
         }
       });
   });
@@ -120,19 +124,21 @@ $(function () {
     })
       .then(function (data) {
         console.log("new note added to db!");
-        // console.log(data.note);
 
         $.ajax({
           method: "GET",
           url: "/saved-articles/" + articleId
         })
           .then(function (data) {
-            $("#latest-notes").append(`
-              <div>${data.note[0].body}</div>
-              <button class="btn btn-secondary" id="delete-notes" data-id="${data.note[0]._id}">Delete</button>
-              `);
+            let content = "";
+            data.note.forEach(element => {
+              content = `
+              <div data-id="${element._id}">${element.body}</div>
+              <button class="btn btn-secondary" id="delete-notes" data-id="${element._id}">Delete</button>
+              `;
+            });
+            $("#existing-notes").append(content);
           });
-
         $("#new-notes").val("");
       });
   });
@@ -143,18 +149,20 @@ $(function () {
     $("#new-notes").val("");
   });
 
+
   $(document.body).on("click", "#delete-notes", function (e) {
     e.preventDefault();
 
     const notesId = $(this).attr("data-id");
+    const articleId = $("#add-notes").attr("data-id");
     $.ajax({
       method: "DELETE",
-      url: "/notes/" + notesId
+      url: "/notes/" + notesId + "/" + articleId
     })
       .then(function (data) {
-        // to fix
-        $("#latest-notes").empty();
-        $("#delete-notes").removeAttr("data-id");
+        console.log("note deleted!");
+        $(`div[data-id="${notesId}"`).remove();
+        $(`button[data-id="${notesId}"`).remove();
       });
   });
 

@@ -32,16 +32,6 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 // Routes
 
-// Route to display html pages
-// app.get("/", function (req, res) {
-//   res.render("index");
-// });
-
-app.get("/saved", function (req, res) {
-  res.render("saved");
-});
-
-
 // Route for scraping
 app.get("/", function (req, res) {
 
@@ -160,8 +150,8 @@ app.get("/saved-articles/:id", function (req, res) {
 app.post("/saved-articles/:id", function (req, res) {
   db.note.create(req.body)
     .then(function (dbNote) {
-      // to fix not to overwrite
-      return db.article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
+      //insert a new note (not overwrite) by using $push
+      return db.article.findOneAndUpdate({ _id: req.params.id }, { $push: { note: dbNote._id } }, { new: true });
     })
     .then(function (dbArticle) {
       res.json(dbArticle);
@@ -173,13 +163,19 @@ app.post("/saved-articles/:id", function (req, res) {
 });
 
 // route for deleting notes
-app.delete("/notes/:id", function (req, res) {
-  db.note.findOneAndRemove({ _id: req.params.id })
+app.delete("/notes/:notesId/:articleId", function (req, res) {
+
+  db.note.findOneAndRemove({ _id: req.params.notesId })
     .then(function (data) {
-      console.log("notes deleted");
-      res.json(data);
-      // console.log(data); //returns null
+      return db.article.findOneAndUpdate({ _id: req.params.articleId }, { $pull: { note: data._id } }, { new: true });
+    })
+    .then(function (dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function (err) {
+      res.json(err);
     });
+
 });
 
 
