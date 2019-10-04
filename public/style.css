@@ -1,9 +1,5 @@
-#article div {
-  background: rgb(245, 243, 223);
-  margin-bottom: 10px;
-}
-
-#saved-articles div {
-  background: rgb(255, 231, 235);
-  margin-bottom: 10px;
+.article-wrap {
+  background: rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  padding: 15px;
 }

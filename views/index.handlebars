@@ -1,16 +1,20 @@
-<button type="button" id="home">Home</button>
-<button type="button" id="scrape">Scrape</button>
-<button type="button" id="saved">Saved articles</button>
+<div class="container">
 
-<div id="home-msg">
-  <p>Let's scrape articles!</p>
+  <div class="row justify-content-center mb-5">
+    <h1 class="col-12 text-center">Scraper</h1>
+    <button type="button" id="home" class="mx-1 my-3 btn btn-primary">Home</button>
+    <button type="button" id="scrape" class="mx-1 my-3 btn btn-primary">Scrape</button>
+    <button type="button" id="saved" class="mx-1 my-3 btn btn-primary">Saved articles</button>
+
+    <p id="home-msg" class="col-12 text-center">Let's scrape articles!</p>
+  </div>
+
+
+  <div id="saved-articles" class="row"></div>
+
+  <div id="article" class="row"></div>
+
 </div>
-
-
-<div id="saved-articles"></div>
-
-
-<div id="article"></div>
 
 
 <!-- Modal -->
@@ -32,7 +36,7 @@
 
         <form>
           <label for="new-notes">Add new notes</label>
-          <textarea class="form-control" id="new-notes" rows="5"></textarea>
+          <textarea class="form-control" id="new-notes" rows="2"></textarea>
           <button type="button" class="btn btn-secondary" id="clear">Clear</button>
           <button type="button" class="btn btn-primary" id="add-notes">Add</button>
         </form>
