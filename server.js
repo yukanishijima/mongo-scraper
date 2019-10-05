@@ -27,7 +27,7 @@ app.set("view engine", "handlebars");
 mongoose.connection.dropDatabase();
 // Connect to Mongo DB 
 // If deployed, use the deployed database. Otherwise use the local database
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/moongoose-scraper";
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoose-scraper";
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 
